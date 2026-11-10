@@ -19,9 +19,36 @@ const defaultWorkspace = () => ({ trip: "coast", lists: Object.fromEntries(Objec
 const readWorkspace = () => {
     try {
         const saved = JSON.parse(localStorage.getItem("packwell-workspace") || "null");
-        if (!saved || !profiles[saved.trip]) return defaultWorkspace();
+        if (!saved || typeof saved !== "object" || Array.isArray(saved) || !profiles[saved.trip]) return defaultWorkspace();
         const defaults = defaultWorkspace();
-        return { trip: saved.trip, lists: { ...defaults.lists, ...saved.lists } };
+        const savedLists = saved.lists && typeof saved.lists === "object" && !Array.isArray(saved.lists) ? saved.lists : {};
+        const lists = Object.fromEntries(Object.entries(defaults.lists).map(([trip, defaultItems]) => {
+            const savedItems = Array.isArray(savedLists[trip]) ? savedLists[trip].filter((item) => item && typeof item === "object" && !Array.isArray(item)) : [];
+            const savedById = new Map(savedItems.filter((item) => typeof item.id === "string").map((item) => [item.id, item]));
+            const ids = new Set(defaultItems.map((item) => item.id));
+            const builtInItems = defaultItems.map((item) => ({ ...item, packed: savedById.get(item.id)?.packed === true }));
+            const customItems = [];
+
+            for (const item of savedItems) {
+                if (item.custom !== true || typeof item.id !== "string" || item.id.length > 160 || !item.id.startsWith("custom-") || ids.has(item.id)) continue;
+                const name = typeof item.name === "string" ? item.name.trim().slice(0, 70) : "";
+                if (!name || !categoryNames.includes(item.category)) continue;
+
+                ids.add(item.id);
+                customItems.push({
+                    id: item.id,
+                    name,
+                    category: item.category,
+                    hint: typeof item.hint === "string" ? item.hint.slice(0, 150) : "Added to this trip",
+                    packed: item.packed === true,
+                    custom: true,
+                });
+            }
+
+            return [trip, [...builtInItems, ...customItems]];
+        }));
+
+        return { trip: saved.trip, lists };
     } catch { return defaultWorkspace(); }
 };
 

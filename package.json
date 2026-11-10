@@ -2,8 +2,12 @@
   "name": "packing-checklist",
   "private": true,
   "version": "1.0.0",
+  "description": "Local-first React packing checklist with trip profiles, custom items, and saved progress.",
   "type": "module",
-  "homepage": "https://a2rp.github.io/packing-checklist",
+  "homepage": "https://a2rp.github.io/packing-checklist/",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -21,7 +25,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@vitejs/plugin-react": "^6.1.1",
-    "eslint": "10.12.0",
+    "eslint": "10.14.0",
     "eslint-plugin-react-hooks": "7.1.1",
     "eslint-plugin-react-refresh": "0.5.7",
     "gh-pages": "6.1.1",

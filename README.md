@@ -24,10 +24,10 @@ Trip profiles, packed states, and custom items are stored in this browser's `loc
 
 ## Run locally
 
-Use Node.js and npm, then run these commands from this directory:
+Requires Node.js 20.19+ or 22.12+. Run these commands from this directory:
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
